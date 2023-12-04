@@ -4,5 +4,5 @@ My Advent of Code 2023 submissions in Rust:
 - [x] Part1
 - [x] Part2
 ## Cube Conundrum
-- [ ] Part1
-- [ ] Part2
+- [x] Part1
+- [x] Part2

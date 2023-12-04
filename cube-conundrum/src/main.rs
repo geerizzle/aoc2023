@@ -1,5 +1,6 @@
 use std::{
-    collections::HashMap,
+    cmp::max,
+    collections::{hash_map, HashMap},
     fs::File,
     io::{BufRead, BufReader},
 };
@@ -23,7 +24,6 @@ fn part1(line: &String) -> u32 {
     let allowed: HashMap<&str, u32> = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
     let (id, sets) = get_id_and_sets(line);
     let mut invalid: i32 = 0;
-    println!("id: {}", id);
     for set in &sets {
         set.split(",").for_each(|pull| {
             let trimmed = pull.trim();
@@ -41,19 +41,34 @@ fn part1(line: &String) -> u32 {
     id as u32
 }
 
-fn part2(line: &String) -> u32 {
-    todo!();
+fn part2(line: &String) -> u128 {
+    let (_, sets) = get_id_and_sets(line);
+    let mut maxs: HashMap<&str, u32> = HashMap::from([("red", 0), ("blue", 0), ("green", 0)]);
+    for set in &sets {
+        set.split(",").for_each(|pull| {
+            let trimmed = pull.trim();
+            let (value, color) = trimmed.split_at(trimmed.find(" ").unwrap());
+            let value_as_int =
+                u32::from_str_radix(value, 10).expect("Failed to convert value to int");
+            println!("Color {}", color);
+            maxs.insert(color.trim(), max(maxs[color.trim()], value_as_int));
+        })
+    }
+    (maxs["red"] * maxs["blue"] * maxs["green"]) as u128
 }
 
 fn main() -> std::io::Result<()> {
     let file = File::open("input.txt")?;
     let buffer = BufReader::new(file);
     let mut sol: u128 = 0;
+    let mut sol2: u128 = 0;
     buffer.lines().for_each(|line| {
         let line_as_input: String = line.expect("Failed to retrieve line");
         sol += part1(&line_as_input) as u128;
+        sol2 += part2(&line_as_input) as u128;
     });
     println!("Solution part 1: {}", sol);
+    println!("Solution part 2: {}", sol2);
     Ok(())
 }
 
@@ -75,5 +90,16 @@ mod tests {
             sol += part1(&line_as_input);
         });
         assert_eq!(8, sol);
+    }
+    #[test]
+    fn test_part_2() {
+        let file = File::open("input_test.txt").unwrap();
+        let buffer = BufReader::new(file);
+        let mut sol = 0;
+        buffer.lines().for_each(|line| {
+            let line_as_input: String = line.expect("Failed to retrieve line");
+            sol += part2(&line_as_input);
+        });
+        assert_eq!(2286, sol);
     }
 }
