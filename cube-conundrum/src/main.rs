@@ -1,6 +1,6 @@
 use std::{
     cmp::max,
-    collections::{hash_map, HashMap},
+    collections::HashMap,
     fs::File,
     io::{BufRead, BufReader},
 };
@@ -41,7 +41,7 @@ fn part1(line: &String) -> u32 {
     id as u32
 }
 
-fn part2(line: &String) -> u128 {
+fn part2(line: &String) -> u32 {
     let (_, sets) = get_id_and_sets(line);
     let mut maxs: HashMap<&str, u32> = HashMap::from([("red", 0), ("blue", 0), ("green", 0)]);
     for set in &sets {
@@ -54,52 +54,43 @@ fn part2(line: &String) -> u128 {
             maxs.insert(color.trim(), max(maxs[color.trim()], value_as_int));
         })
     }
-    (maxs["red"] * maxs["blue"] * maxs["green"]) as u128
+
+    maxs["red"] * maxs["blue"] * maxs["green"]
+}
+fn apply_fn_to_input(f: &dyn Fn(&String) -> u32, file_name: &str) -> std::io::Result<u128> {
+    let file = File::open(file_name)?;
+    let buffer = BufReader::new(file);
+    let mut sol: u128 = 0;
+    buffer.lines().for_each(|line| {
+        let line_as_input: String = line.expect("Failed to retrieve line");
+        sol += f(&line_as_input) as u128
+    });
+    Ok(sol)
 }
 
 fn main() -> std::io::Result<()> {
-    let file = File::open("input.txt")?;
-    let buffer = BufReader::new(file);
-    let mut sol: u128 = 0;
-    let mut sol2: u128 = 0;
-    buffer.lines().for_each(|line| {
-        let line_as_input: String = line.expect("Failed to retrieve line");
-        sol += part1(&line_as_input) as u128;
-        sol2 += part2(&line_as_input) as u128;
-    });
-    println!("Solution part 1: {}", sol);
-    println!("Solution part 2: {}", sol2);
+    println!(
+        "Solution part 1: {}",
+        apply_fn_to_input(&part1, "input.txt").unwrap()
+    );
+    println!(
+        "Solution part 2: {}",
+        apply_fn_to_input(&part2, "input.txt").unwrap()
+    );
+
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use std::{
-        fs::File,
-        io::{BufRead, BufReader},
-    };
+    use super::{apply_fn_to_input, part1, part2};
 
-    use super::{part1, part2};
     #[test]
     fn test_part_1() {
-        let file = File::open("input_test.txt").unwrap();
-        let buffer = BufReader::new(file);
-        let mut sol = 0;
-        buffer.lines().for_each(|line| {
-            let line_as_input: String = line.expect("Failed to retrieve line");
-            sol += part1(&line_as_input);
-        });
-        assert_eq!(8, sol);
+        assert_eq!(8, apply_fn_to_input(&part1, "input_test.txt").unwrap())
     }
     #[test]
     fn test_part_2() {
-        let file = File::open("input_test.txt").unwrap();
-        let buffer = BufReader::new(file);
-        let mut sol = 0;
-        buffer.lines().for_each(|line| {
-            let line_as_input: String = line.expect("Failed to retrieve line");
-            sol += part2(&line_as_input);
-        });
-        assert_eq!(2286, sol);
+        assert_eq!(2286, apply_fn_to_input(&part2, "input_test.txt").unwrap())
     }
 }
