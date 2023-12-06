@@ -6,3 +6,6 @@ My Advent of Code 2023 submissions in Rust:
 ## Cube Conundrum
 - [x] Part1
 - [x] Part2
+## Gear Ratio
+- [x] Part1
+- [x] Part2
