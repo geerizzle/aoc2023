@@ -9,3 +9,6 @@ My Advent of Code 2023 submissions in Rust:
 ## Gear Ratio
 - [x] Part1
 - [x] Part2
+## Scratchcards
+- [x] Part1
+- [x] Part2
