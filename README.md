@@ -15,3 +15,7 @@ My Advent of Code 2023 submissions in Rust:
 ## Fertilizer TODO
 - [ ] Part1
 - [ ] Part2
+## Wait for it
+- [x] Part1
+- [x] Part2
+
